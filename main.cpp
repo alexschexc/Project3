@@ -10,6 +10,7 @@
 
 #include <semaphore.h>
 
+
 using namespace std;
 
 /* Data structure for storing the items produced until consumed */
@@ -50,10 +51,18 @@ void add( int number );
 int remove( void ); 
 void producer( void );
 void consumer( void );
-
+void stageOne();
 /* The main function */
 int main( void )
 {
+    /*
+    int argc, char **argv
+    int buffsize = atoi(argv[1]);
+    int filesize= atoi(argv[2]);
+    int uid = atoi(argv[3]);
+    int gid = atoi(argv[4]);
+    string string = argv[5];
+*/
  
    /* Initialize the buffer */
    for(int i = 0; i < CAPACITY; ++i )
@@ -90,9 +99,8 @@ int main( void )
    {
       consumers[i].join( );
    }
-   //////////////
-   /* Stage 1 */
-   /////////////
+
+
 
 
 
@@ -123,6 +131,28 @@ int main( void )
    sem_destroy( &fullSlots );
 
    return 0;
+}
+void stageOne(){
+    DIR *directory;
+    dirent *entry;
+
+    if( (directory = opendir("/Users/martinarriaga/Desktop/TestDirectory")) != NULL){
+        int x =0;
+        while( (entry= readdir(directory)) != NULL){
+            if( !(strcmp(entry->d_name, ".")) || !(strcmp(entry->d_name,"..")) ){
+
+            }else {
+
+                bufferOne[x] = entry->d_name;
+                x++;
+
+            }
+        }
+        closedir(directory);
+
+    }else{
+        errormsg("Could not access Directory");
+    }
 }
 void add( int number ) 
 {

@@ -9,6 +9,8 @@
 #include <cassert>
 
 #include <semaphore.h>
+#include <dirent.h>
+#include <string.h>
 
 
 using namespace std;

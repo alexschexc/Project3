@@ -1,5 +1,3 @@
-/* This program implements a solution to the producer consumer problem using monitors */
-
 #include <iostream>
 #include <thread>
 #include <string>
@@ -57,14 +55,14 @@ void stageOne();
 /* The main function */
 int main( void )
 {
-    /*
-    int argc, char **argv
+    
+    int argc; char **argv;
     int buffsize = atoi(argv[1]);
     int filesize= atoi(argv[2]);
     int uid = atoi(argv[3]);
     int gid = atoi(argv[4]);
     string string = argv[5];
-*/
+
  
    /* Initialize the buffer */
    for(int i = 0; i < CAPACITY; ++i )

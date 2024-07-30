@@ -1,5 +1,3 @@
-/* This program implements a solution to the producer consumer problem using monitors */
-
 #include <iostream>
 #include <thread>
 #include <string>
@@ -9,6 +7,8 @@
 #include <cassert>
 
 #include <semaphore.h>
+#include <dirent.h>
+#include <string.h>
 
 
 using namespace std;
@@ -59,14 +59,14 @@ void errormsg(char* msg){
 /* The main function */
 int main( void )
 {
-    /*
-    int argc, char **argv
+    
+    int argc; char **argv;
     int buffsize = atoi(argv[1]);
     int filesize= atoi(argv[2]);
     int uid = atoi(argv[3]);
     int gid = atoi(argv[4]);
     string string = argv[5];
-*/
+
  
    /* Initialize the buffer */
    for(int i = 0; i < CAPACITY; ++i )
@@ -111,7 +111,7 @@ int main( void )
    //////////////
    /* Stage 2 */
    /////////////  
-
+   
    
    //////////////
    /* Stage 3 */

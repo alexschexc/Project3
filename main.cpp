@@ -52,6 +52,10 @@ int remove( void );
 void producer( void );
 void consumer( void );
 void stageOne();
+void errormsg(char* msg){
+    perror(msg);
+    exit(1);
+}
 /* The main function */
 int main( void )
 {
@@ -154,6 +158,7 @@ void stageOne(){
         errormsg("Could not access Directory");
     }
 }
+
 void add( int number ) 
 {
 

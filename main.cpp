@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <string>
 #include <sys/stat.h>
@@ -131,7 +132,7 @@ int main( void )
    }
    else{
      int uID, gID, fSize = 0;
-     for(int i = 0; i < buffsize; ++i){
+     for(int i = 0; i < buffsize; ++i){ // loop 2 or sub loop 1?
        struct stat fileStat;
        filename = bufferOne[i];
        if (stat(filename, &fileStat) == -1){
@@ -189,34 +190,37 @@ int main( void )
 	   // push to bufferTwo[]
 	 }
 	 else continue;}
-
-
        }
-       
-
      }
    
    
    //////////////
    /* Stage 3 */
    /////////////
-   
-//   for(int j = 0; j < buffsize; ++j){  // 1.Start Loop2  
-
+   for(int j = 0; j < buffsize; ++j){  // 1.Start Loop3 ? 
+     filename = bufferTwo[j];
+     if(filename != nullptr && filename[0] != '\0'){
+       ifstream file (filename);
+       if(!file.is_open()){
+	 cerr << "Error opening file: " << filename << endl;
+	 exit(1);
+       }
+       std::string line = "";
+       while (getline(file, line)){
+	 bufferThree.push(line); // change push to whatever our boundedBuffer add function is
+       }
+       file.close(); // the file will be reopened on the next pass through, seems like it has to be done this way otherwise ifstream won't know which filename we're referencing.
+     }
+   }
    //////////////
    /* Stage 4 */
    /////////////
-   
-//   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 3
+   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 4}
 
    //////////////
    /* Stage 5 */
-   /////////////
-     
-     //}
-    // }
-  // }
-
+   /////////////  
+   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 5}
 
    /* Destroy the semaphores */
    sem_destroy( &pcMutex );

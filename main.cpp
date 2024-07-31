@@ -59,7 +59,7 @@ void errormsg(char* msg){
 /* The main function */
 int main( void )
 {
-    
+  stageOne();
     int argc; char **argv;
     int buffsize = atoi(argv[1]);
     int filesize= atoi(argv[2]);
@@ -104,24 +104,32 @@ int main( void )
       consumers[i].join( );
    }
 
+   // 1. Start Loop1
+    //////////////
+   /* Stage 1 */
+   /////////////  
 
 
 
 
    //////////////
    /* Stage 2 */
-   /////////////  
+   ///////////// 
+
+   
    
    
    //////////////
    /* Stage 3 */
    /////////////
-
+   
+   // 1.Start Loop2
 
    //////////////
    /* Stage 4 */
    /////////////
-
+   
+   // 1.Start Loop 3
 
    //////////////
    /* Stage 5 */

@@ -105,7 +105,8 @@ int main( void )
    }
 
    // 1. Start Loop1
-    //////////////
+   for(int i = 0; i < buffsize; ++i){
+   //////////////
    /* Stage 1 */
    /////////////  
 
@@ -123,18 +124,23 @@ int main( void )
    /* Stage 3 */
    /////////////
    
-   // 1.Start Loop2
+   // 1.Start Loop2  
+   for(int j = 0; j < buffsize; ++j){
 
    //////////////
    /* Stage 4 */
    /////////////
    
    // 1.Start Loop 3
+   for(int k = 0; k < buffsize; ++k){
 
    //////////////
    /* Stage 5 */
    /////////////
-
+     
+     }
+     }
+   }
 
 
    /* Destroy the semaphores */

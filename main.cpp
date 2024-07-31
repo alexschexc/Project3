@@ -141,13 +141,55 @@ int main( void )
        uID = fileStat.st_uid;
        gID = fileStat.st_gid;
        
-       if( uid == -1 && gid ==-1 ){}
-       else if( filesize == -1 && uid ==-1 ){}
-       else if( filesize == -1 && gid ==-1 ){}
-       else if( filesize == -1 ){}
-       else if( uid ==-1 ){}
-       else if( gid ==-1 ){}
+       if( uid == -1 && gid ==-1 ){
+	 if (fSize > filesize){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;
+       }
+       else if( filesize == -1 && uid ==-1 ){
+	 if (gID == gid){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;
+       }
+       else if( filesize == -1 && gid ==-1 ){
+	 if (uID == uid){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;
+       }
+       else if( filesize == -1 ){
+	 if (uID == uid && gID == gid){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;
+
+       }
+       else if( uid ==-1 ){
+	 if (fSize > filesize && gID == gid ){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;
+       }
+       else if( gid ==-1 ){	 
+	 if (fSize > filesize && uID == uid ){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;}
        else{
+	 if (fSize > filesize && uID == uid && gID == gid ){
+	   // read from bufferOne[i]
+	   // push to bufferTwo[]
+	 }
+	 else continue;}
+
 
        }
        

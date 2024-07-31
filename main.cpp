@@ -1,6 +1,11 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <cstring>
+#include <errno.h>
+
 
 #include <cmath>
 #include <cstdlib>
@@ -9,6 +14,7 @@
 #include <semaphore.h>
 #include <dirent.h>
 #include <string.h>
+#include "boundedBuffer.h"
 
 
 using namespace std;
@@ -104,8 +110,7 @@ int main( void )
       consumers[i].join( );
    }
 
-   // 1. Start Loop1
-   for(int i = 0; i < buffsize; ++i){
+//   for(int i = 0; i < buffsize; ++i){  // 1. Start Loop1
    //////////////
    /* Stage 1 */
    /////////////  
@@ -116,31 +121,57 @@ int main( void )
    //////////////
    /* Stage 2 */
    ///////////// 
+   char* filename;
 
+
+   if(filesize == -1 &&uid == -1 && gid == -1){
+	 // read from bufferOne
+	 // no filtering occurs
+	 // write to bufferTwo
+   }
+   else{
+     int uID, gID, fSize = 0;
+     for(int i = 0; i < buffsize; ++i){
+       struct stat fileStat;
+       filename = bufferOne[i];
+       if (stat(filename, &fileStat) == -1){
+	 cerr << "Error retrieving file information: " << strerror(errno) << endl;
+       }
+       fSize = fileStat.st_size;
+       uID = fileStat.st_uid;
+       gID = fileStat.st_gid;
+       
+       if( uid == -1 && gid ==-1 ){}
+       else if( filesize == -1 && uid ==-1 ){}
+       else if( filesize == -1 && gid ==-1 ){}
+       else if( filesize == -1 ){}
+       else if( uid ==-1 ){}
+       else if( gid ==-1 ){}
+       
+
+     }
    
-   
+   }
    
    //////////////
    /* Stage 3 */
    /////////////
    
-   // 1.Start Loop2  
-   for(int j = 0; j < buffsize; ++j){
+//   for(int j = 0; j < buffsize; ++j){  // 1.Start Loop2  
 
    //////////////
    /* Stage 4 */
    /////////////
    
-   // 1.Start Loop 3
-   for(int k = 0; k < buffsize; ++k){
+//   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 3
 
    //////////////
    /* Stage 5 */
    /////////////
      
-     }
-     }
-   }
+     //}
+    // }
+  // }
 
 
    /* Destroy the semaphores */
@@ -250,4 +281,4 @@ void consumer( void )
       int number = remove( );
 	  
    }
-}
+} 

@@ -99,11 +99,9 @@ void boundedBuffer :: consumer( void )
 }
 
 void boundedBuffer::print(){
-    for(int i =0; i <30; i++){
-        fprintf(stdout, "%s\n",bbuffer[i].c_str());
-    }
-
-}
+    for(int i =0; i <30; i++) {
+        fprintf(stdout, "%s\n", bbuffer[i].c_str());
+    }}
 
 boundedBuffer::~boundedBuffer() {
     sem_destroy(&pcMutex);

@@ -255,9 +255,13 @@ int main( void )
 
        }
 
- void stageTwo(boundedBuffer* source,boundedBuffer* destination ){
-           for(int i = 0; i < 3; i++){
-               string str = source->remove();
-               destination ->add(str);
+       void stageTwo(boundedBuffer* buffer1,boundedBuffer* buffer2 ){
+           int h = 1000;
+           while(h > 0){
+               string str = buffer1->remove();
+               buffer2 ->add(str);
+               h--;
+
            }
+
        }

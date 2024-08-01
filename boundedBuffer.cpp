@@ -43,7 +43,6 @@ void boundedBuffer:: add( string& str){
     ++count;
 
 
-
 /* Wake up a consumer */
     sem_post( &fullSlots );
 
@@ -60,6 +59,7 @@ string boundedBuffer:: remove()
 
     /* Reserve a full slot */
     sem_wait( &fullSlots );
+
 
 
     /* Acquire the lock for critical section */

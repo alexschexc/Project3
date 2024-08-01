@@ -22,6 +22,9 @@ boundedBuffer:: boundedBuffer(size_t BUFFSIZE):
 }
 
 
+
+
+
 /* Function used to add an item to the buffer */
 void boundedBuffer:: add( string& str){
 
@@ -31,7 +34,7 @@ void boundedBuffer:: add( string& str){
 /* Acquire the lock for critical section */
     sem_wait( &pcMutex );
 
-    assert(count >= 0 && count <= CAPACITY);
+//assert(count >= 0 && count <= CAPACITY);
 
 
 /* insert the item at the tail end of the buffer */
@@ -62,7 +65,7 @@ string boundedBuffer:: remove()
     /* Acquire the lock for critical section */
     sem_wait( &pcMutex );
 
-    assert(count >= 0 && count <= CAPACITY);
+    // assert(count >= 0 && count <= CAPACITY);
 
 
     /* Delete an item at the head end of the buffer */

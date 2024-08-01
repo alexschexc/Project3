@@ -220,113 +220,43 @@ int main( void )
    //////////////
    /* Stage 5 */
    /////////////  
-   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 5}
+   for(int k = 0; k < buffsize; ++k) {   // 1.Start Loop 5}
 
-   /* Destroy the semaphores */
-   sem_destroy( &pcMutex );
-   sem_destroy( &emptySlots );
-   sem_destroy( &fullSlots );
+       /* Destroy the semaphores */
+       sem_destroy(&pcMutex);
+       sem_destroy(&emptySlots);
+       sem_destroy(&fullSlots);
 
-   return 0;
-}
-void stageOne(){
-    DIR *directory;
-    dirent *entry;
+       return 0;
 
-    if( (directory = opendir("/Users/martinarriaga/Desktop/TestDirectory")) != NULL){
-        int x =0;
-        while( (entry= readdir(directory)) != NULL){
-            if( !(strcmp(entry->d_name, ".")) || !(strcmp(entry->d_name,"..")) ){
-
-            }else {
-
-                bufferOne[x] = entry->d_name;
-                x++;
-
-            }
-        }
-        closedir(directory);
-
-    }else{
-        errormsg("Could not access Directory");
-    }
-}
-
-void add( int number ) 
-{
-
-   /* Reserve an empty slot */
-   sem_wait( &emptySlots );
-
-   /* Acquire the lock for critical section */
-   sem_wait( &pcMutex );
-
-   assert(count >= 0 && count <= CAPACITY);
-   
-
-   /* insert the item at the tail end of the buffer */
-   buffer[tail] = number;
-   tail = (tail + 1) % CAPACITY;
-   ++count;
-
-   cout << "Number added is " << number << endl;
-
-   /* Wake up a consumer */
-   sem_post( &fullSlots );
-   
-   /* Release the lock for critical section */
-   sem_post( &pcMutex );
-
-
-   return;
-}
-
-/* Function used to remove an item from the buffer */
-int remove( void ) 
-{
-
-   /* Reserve a full slot */
-   sem_wait( &fullSlots );
-
-
-   /* Acquire the lock for critical section */
-   sem_wait( &pcMutex );
-
-   assert(count >= 0 && count <= CAPACITY);
- 
- 
-   /* Delete an item at the head end of the buffer */
-   int number = buffer[head];
-   buffer[head] = 0;
-   head = (head + 1) % CAPACITY;
-   --count;
-
-   assert( number > 0 );
-   
-   cout << "Number removed is " << number << endl;
-
-   /* Wake up a producer */
-   sem_post( &emptySlots );
- 
-   /* Release the lock for critical section */
-   sem_post( &pcMutex );
-
-   return number;
-}
-
-/* Driver code for a producer */
-void producer( void )
-{
-   while (1) {
-      add( rand( ) % 100 +  1 );
    }
-}
 
-/* Driver code for a consumer */
-void consumer( void )
-{
-   while (1) {
-      int number = remove( );
-	  
-   }
-} 
+ void stageOne(boundedBuffer* buff){
+           DIR *directory;
+           struct dirent *entry;
+
+           if( (directory = opendir("/Users/martinarriaga/Desktop/TestDirectory")) != NULL){
+
+               while( (entry= readdir(directory)) != NULL){
+                   if( entry->d_type == DT_REG ){
+                       string filename = entry->d_name;
+                       buff->add( filename);
+
+                   }else {
+
+                   }
+               }
+               closedir(directory);
+
+           }else{
+               errormsg("Could not access Directory");
+           }
+
+       }
+
+       void stageTwo(boundedBuffer* source,boundedBuffer* destination ){
+           for(int i = 0; i < 3; i++){
+               string str = source->remove();
+               destination ->add(str);
+           }
+       }

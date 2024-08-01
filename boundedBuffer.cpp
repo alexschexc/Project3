@@ -22,9 +22,6 @@ boundedBuffer:: boundedBuffer(size_t BUFFSIZE):
 }
 
 
-
-
-
 /* Function used to add an item to the buffer */
 void boundedBuffer:: add( string& str){
 

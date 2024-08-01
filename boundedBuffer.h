@@ -3,6 +3,7 @@
 #define PROJECT3_BOUNDEDBUFFER_H
 #include <vector>
 #include <semaphore.h>
+#include <string>
 using namespace std;
 
 
@@ -11,14 +12,14 @@ class boundedBuffer {
 
 private:
 
-    vector <string> bbuffer;
-    int tail;
     int head;
+    int tail;
     int count;
-    int CAPACITY;
+    vector <string> bbuffer;
     sem_t pcMutex;
     sem_t emptySlots;
     sem_t fullSlots;
+    int CAPACITY;
 
 
 

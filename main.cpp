@@ -58,7 +58,8 @@ void add( int number );
 int remove( void ); 
 void producer( void );
 void consumer( void );
-void stageOne();
+void stageOne(boundedBuffer* buff);
+void stageTwo(boundedBuffer* source,boundedBuffer* destination );
 void errormsg(char* msg){
     perror(msg);
     exit(1);
@@ -66,7 +67,6 @@ void errormsg(char* msg){
 /* The main function */
 int main( void )
 {
-  stageOne();
     int argc; char **argv;
     int buffsize = atoi(argv[1]);
     int filesize= atoi(argv[2]);
@@ -254,7 +254,7 @@ int main( void )
 
        }
 
-       void stageTwo(boundedBuffer* source,boundedBuffer* destination ){
+ void stageTwo(boundedBuffer* source,boundedBuffer* destination ){
            for(int i = 0; i < 3; i++){
                string str = source->remove();
                destination ->add(str);

@@ -11,51 +11,51 @@
 #include <cassert>
 
 #include <semaphore.h>
+#include <vector>
 using namespace std;
 
-boundedBuffer:: boundedBuffer(int BUFFSIZE){
 
-    head = 0;
-    tail = 0;
-    count = 0;
-    sem_init( &pcMutex, 0, 1 );
-    sem_init( &emptySlots, 0, BUFFSIZE);
-    sem_init( &fullSlots, 0, 0 );
+boundedBuffer:: boundedBuffer(size_t BUFFSIZE):
+        head(0),tail(0),count(25),bbuffer(BUFFSIZE), pcMutex(1), emptySlots(BUFFSIZE), fullSlots(0), CAPACITY(BUFFSIZE)
+{
 
 }
+
+
+
 
 
 /* Function used to add an item to the buffer */
-void boundedBuffer:: add( void){
+void boundedBuffer:: add( string& str){
 
 /* Reserve an empty slot */
-sem_wait( &emptySlots );
+    sem_wait( &emptySlots );
 
 /* Acquire the lock for critical section */
-sem_wait( &pcMutex );
+    sem_wait( &pcMutex );
 
-assert(count >= 0 && count <= BUFFSIZE);
+    assert(count >= 0 && count <= CAPACITY);
 
 
 /* insert the item at the tail end of the buffer */
-buffer[tail] = number;
-tail = (tail + 1) % BUFFSIZE;
-++count;
+    bbuffer.at(tail ) = str ;
+    tail = (tail + 1) % CAPACITY;
+    ++count;
 
-cout << "Number added is " << number << endl;
+
 
 /* Wake up a consumer */
-sem_post( &fullSlots );
+    sem_post( &fullSlots );
 
 /* Release the lock for critical section */
-sem_post( &pcMutex );
+    sem_post( &pcMutex );
 
 
-return;
+    return;
 }
 
 /* Function used to remove an item from the buffer */
-char boundedBuffer:: remove( void )
+string boundedBuffer:: remove()
 {
 
     /* Reserve a full slot */
@@ -69,12 +69,12 @@ char boundedBuffer:: remove( void )
 
 
     /* Delete an item at the head end of the buffer */
-    int number = buffer[head];
-    buffer[head] = 0;
+    string filename = bbuffer.at(head);
+    //bbuffer.at(head) = nullptr;
     head = (head + 1) % CAPACITY;
     --count;
 
-    assert( number > 0 );
+    //assert(filename != nullptr);
 
 
     /* Wake up a producer */
@@ -83,14 +83,15 @@ char boundedBuffer:: remove( void )
     /* Release the lock for critical section */
     sem_post( &pcMutex );
 
-    return number;
+    return filename;
 }
 
 /* Driver code for a producer */
-void boundedBuffer :: producer( void )
+void boundedBuffer :: producer( string x )
 {
     while (1) {
-        add( rand( ) % 100 +  1 );
+
+        //add( x);
     }
 }
 
@@ -98,7 +99,22 @@ void boundedBuffer :: producer( void )
 void boundedBuffer :: consumer( void )
 {
     while (1) {
-        int number = remove( );
+        string number = remove( );
 
     }
+}
+
+void boundedBuffer::print(){
+    for(int i =0; i < 3; i++){
+        fprintf(stdout, "%s\n",bbuffer[i].c_str());
+
+    }
+
+}
+
+boundedBuffer::~boundedBuffer() {
+    sem_destroy(&pcMutex);
+    sem_destroy(&emptySlots);
+    sem_destroy(&fullSlots);
+
 }

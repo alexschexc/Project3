@@ -216,15 +216,36 @@ int main( void )
    //////////////
    /* Stage 4 */
    /////////////
+   char* out1 = "./";
+   char* out2 = "(";
+   char* out3 = "): #";
+   size_t len1 = strlen(out1);
+   size_t len2 = strlen(out2);
+   size_t len3 = strlen(out3);
+   size_t len4 = strlen(string.c_str());
+   size_t len5 = strlen(filename);
    for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 4
-
+     std::string line = "";
+     line = bufferThree[k];
+     
+     if(strstr(line.c_str(), string.c_str())){
+       
+     char* result = new char[len1 + len2 + len3 + len4 + len5 + 1];
+     strcpy(result, out1);
+     strcat(result, filename);
+     strcat(result, out2);
+     strcat(result, out3);
+     strcat(result, string.c_str());
+       bufferFour[k] = result;
+       delete [] result;
+     }
    }
 
    //////////////
    /* Stage 5 */
    /////////////  
    for(int k = 0; k < buffsize; ++k) {   // 1.Start Loop 5
-
+    std::cout << bufferFour[k] << std::endl;
    }
 
        /* Destroy the semaphores */

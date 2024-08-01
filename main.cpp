@@ -216,12 +216,16 @@ int main( void )
    //////////////
    /* Stage 4 */
    /////////////
-   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 4}
+   for(int k = 0; k < buffsize; ++k){   // 1.Start Loop 4
+
+   }
 
    //////////////
    /* Stage 5 */
    /////////////  
-   for(int k = 0; k < buffsize; ++k) {   // 1.Start Loop 5}
+   for(int k = 0; k < buffsize; ++k) {   // 1.Start Loop 5
+
+   }
 
        /* Destroy the semaphores */
        sem_destroy(&pcMutex);

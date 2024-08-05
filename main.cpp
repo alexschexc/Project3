@@ -94,11 +94,18 @@ void stageOne(boundedBuffer* buff) {
 }
 
 void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2 ){
-    int h = 1000;
-    while(h > 0){
+
+    while(true){
+
         string str = buffer1->remove();
+        if(str.empty()){
+            buffer2->add(" ");
+            break;
+
+        }
         buffer2 ->add(str);
-        h--;
+
+
 
     }
 

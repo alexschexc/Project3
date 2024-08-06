@@ -1,20 +1,20 @@
 #include <iostream>
-#include <semaphore.h>
-#include <sys/stat.h>
+
 #include <dirent.h>
-#include <sys/types.h>
-#include <string.h>
+#include <string>
 #include <stdio.h>
 #include <thread>
 #include "boundedBuffer.h"
 #include <fstream>
 
+
 using namespace std;
 
 
 void stageOne(boundedBuffer* buff);
-void stageTwo(boundedBuffer*buff1, boundedBuffer* buff2);
-void stageThree(boundedBuffer*buff2, boundedBuffer* buff3);
+void stageTwo(boundedBuffer* buff1, boundedBuffer* buff2);
+void stageThree(boundedBuffer* buff2, boundedBuffer* buff3);
+void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4);
 
 
 
@@ -39,29 +39,24 @@ int main() {
     int uid;
     int gid;
     string string;
-    boundedBuffer* bufferOne = new boundedBuffer( 50);
+    boundedBuffer* bufferOne  = new boundedBuffer( 50);
     boundedBuffer* bufferTwo = new boundedBuffer(50);
     boundedBuffer* bufferThree = new boundedBuffer(50);
 
-    // vector<thread> th;
-    // th.emplace_back(stageOne,bufferOne);
-    // th.emplace_back(stageTwo,bufferOne, bufferTwo);
-    //th.emplace_back(stageThree, bufferTwo, bufferThree);
-    thread t1(stageOne,bufferOne);
-    thread t2(stageTwo,bufferOne, bufferTwo);
-    thread t3(stageThree, bufferTwo, bufferThree);
+
+
+    vector<thread> th;
+    th.emplace_back(stageOne,bufferOne);
+    th.emplace_back(stageTwo,bufferOne, bufferTwo);
+    th.emplace_back(stageThree, bufferTwo, bufferThree);
 
 
     // thread threadTwo(&fileFilter,filesize,uid,gid);
-    //for (auto& threads: th){
-    //     threads.join();
-    // }
-    t1.join();
-    t2.join();
-    t3.join();
-    //bufferOne->print();
-    // bufferTwo->print();
-    bufferThree->print();
+    for (auto& threads: th){
+        threads.join();
+    }
+
+
     free(bufferOne);
     free(bufferTwo);
     free(bufferThree);
@@ -71,9 +66,9 @@ int main() {
 
 void stageOne(boundedBuffer* buff) {
     DIR *directory;
-    struct dirent *entry;
+    dirent *entry;
 
-    if ((directory = opendir("/Users/martinarriaga/CLionProjects/pipeGREP")) != NULL) {
+    if ((directory = opendir(".")) != NULL) {
 
         while ((entry = readdir(directory)) != NULL) {
             if (entry->d_type == DT_REG) {
@@ -89,66 +84,52 @@ void stageOne(boundedBuffer* buff) {
         errormsg("Could not access Directory");
     }
 
-    string blank = "\n";
-    buff->add(blank);
+
+    buff->add((string &) "\n");
 }
 
-void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2 ){
+void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2){
 
     while(true){
-
         string str = buffer1->remove();
         if(str.empty()){
-            buffer2->add(" ");
             break;
-
         }
         buffer2 ->add(str);
 
-
-
     }
+    buffer2 ->add((string &) "\n");
 
 }
 
 
-
-
-
-
-
-
-
-
-
 void stageThree(boundedBuffer* buffer2, boundedBuffer* buffer3){
-    int h = 1000000;
-    while(h>0){
 
+    while(true){
         string filename = buffer2 ->remove();
-        fprintf(stdout," %s\n", filename.c_str());
+        cout<< filename;
 
-        // if(filename.empty()){
-        // fprintf(stdout," failurerr %s\n", filename.c_str());
-        // buffer3->print();
-        // break;
-        // }
+        if(filename.empty()){
+            break;
+        }
+
         ifstream file;
         file.open(filename);
+        if(!file){
+            //do nothing
+        }else{
+            string line;
+            while (getline(file, line)){
+                cout << line << endl;
+                buffer3->add(line);
+                file.close();
+            }
 
-        // if(!file){
-        //   fprintf(stdout," failure2 %s\n");
-        // break;
-        //}
-
-        string line;
-        while (getline(file, line)){
-            buffer3->add(line); // change push to whatever our boundedBuffer add function is
+            file.close();
         }
-        file.close();
-        // the file will be reopened on the next pass through, seems like it has to be done this way otherwise ifstream won't know which filename we're referencing.
-        h--;
-    }
 
+    }}
+
+void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4){
 
 }

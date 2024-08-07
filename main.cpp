@@ -1,11 +1,10 @@
 #include <iostream>
 #include <dirent.h>
-#include <string>
+#include <string.h>
 #include <stdio.h>
 #include <thread>
 #include "boundedBuffer.h"
 #include <fstream>
-#include <libc.h>
 #include <cstring>
 
 
@@ -16,7 +15,7 @@ using namespace std;
 void stageOne(boundedBuffer* buff);
 void stageTwo(boundedBuffer* buff1, boundedBuffer* buff2);
 void stageThree(boundedBuffer* buff2, boundedBuffer* buff3);
-void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4);
+void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4, string findThis);
 
 
 
@@ -41,10 +40,12 @@ int main() {
     int filesize;
     int uid;
     int gid;
-    string string;
+    string findThis = "endif";
+
     boundedBuffer*  bufferOne  = new boundedBuffer( buffsize);
     boundedBuffer* bufferTwo = new boundedBuffer(buffsize);
     boundedBuffer* bufferThree = new boundedBuffer(buffsize);
+    boundedBuffer* bufferFour = new boundedBuffer(buffsize);
 
 
 
@@ -52,6 +53,7 @@ int main() {
     th.emplace_back(stageOne,bufferOne);
     th.emplace_back(stageTwo,bufferOne, bufferTwo);
     th.emplace_back(stageThree, bufferTwo, bufferThree);
+    th.emplace_back(stageFour,bufferThree,bufferFour,findThis);
 
 
     // thread threadTwo(&fileFilter,filesize,uid,gid);
@@ -63,6 +65,7 @@ int main() {
     delete(bufferOne);
     delete(bufferTwo);
     delete(bufferThree);
+    delete(bufferFour);
 
     return 0;
 }
@@ -75,15 +78,12 @@ void stageOne(boundedBuffer* buff) {
 
         while( (entry= readdir(directory)) != NULL){
             if( !(strcmp(entry->d_name, ".")) || !(strcmp(entry->d_name,"..")) ){
-
             }else {
                 string str =entry->d_name;
-                //cout << str << endl;
                 buff->add(str);
             }
         }
         closedir(directory);
-
     }else{
         errormsg("Could not access Directory");
     }
@@ -97,8 +97,7 @@ void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2){
     string key ( "alldone6969");
     while(true){
         string str = buffer1->remove();
-        //cout << str << endl;
-        if(!(str.compare(key))){
+        if(!(str.compare(key))){ // compares the string to the key: alldone6969 -> if equal .compare ret 0, thats why !=
             buffer2 ->add(key);
             break;
         }
@@ -129,7 +128,17 @@ void stageThree(boundedBuffer* buffer2, boundedBuffer* buffer3){
     }
 }
 
-void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4){
+void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4, string findThis){
+    while(true){
+        const char* target = findThis.c_str();
+        string line = buffer3->remove();
+        if(strstr(line.c_str(),target)){
+            buffer4->add(line);
+
+        }else{
+            ;// do not add
+        }
+    }
 
 
 }

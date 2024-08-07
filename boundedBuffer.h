@@ -1,38 +1,44 @@
-
 #ifndef PROJECT3_BOUNDEDBUFFER_H
 #define PROJECT3_BOUNDEDBUFFER_H
 #include <vector>
-#include <semaphore.h>
+#include <semaphore>
 #include <string>
-using namespace std;
+#include <libc.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <sys/stat.h>
 
+using namespace std;
 
 
 class boundedBuffer {
 
 private:
 
-    int head;
-    int tail;
-    int count;
     vector <string> bbuffer;
-    sem_t pcMutex;
-    sem_t emptySlots;
-    sem_t fullSlots;
+    int tail;
+    int head;
+    int count;
     int CAPACITY;
+
+    sem_t* pcMutex;
+    sem_t* emptySlots;
+    sem_t* fullSlots;
+
+
+
 
 
 
 public:
 
-
-    boundedBuffer(size_t BUFFSIZE);
+    explicit boundedBuffer(int BUFFSIZE);
     void add(string& str);
     string remove();
     void producer(string n);
     void consumer();
     void print();
-    ~   boundedBuffer();
+    ~boundedBuffer();
 };
 
 

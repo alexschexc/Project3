@@ -1,11 +1,12 @@
 #include <iostream>
-
 #include <dirent.h>
 #include <string>
 #include <stdio.h>
 #include <thread>
 #include "boundedBuffer.h"
 #include <fstream>
+#include <libc.h>
+
 
 
 using namespace std;
@@ -15,6 +16,7 @@ void stageOne(boundedBuffer* buff);
 void stageTwo(boundedBuffer* buff1, boundedBuffer* buff2);
 void stageThree(boundedBuffer* buff2, boundedBuffer* buff3);
 void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4);
+
 
 
 
@@ -34,18 +36,18 @@ int main() {
 */
 
 
-    int buffsize;
+    int buffsize = 50;
     int filesize;
     int uid;
     int gid;
     string string;
-    boundedBuffer* bufferOne  = new boundedBuffer( 50);
-    boundedBuffer* bufferTwo = new boundedBuffer(50);
-    boundedBuffer* bufferThree = new boundedBuffer(50);
+    boundedBuffer*  bufferOne  = new boundedBuffer( buffsize);
+    boundedBuffer* bufferTwo = new boundedBuffer(buffsize);
+    boundedBuffer* bufferThree = new boundedBuffer(buffsize);
 
 
 
-    vector<thread> th;
+    vector <thread> th;
     th.emplace_back(stageOne,bufferOne);
     th.emplace_back(stageTwo,bufferOne, bufferTwo);
     th.emplace_back(stageThree, bufferTwo, bufferThree);
@@ -57,9 +59,9 @@ int main() {
     }
 
 
-    free(bufferOne);
-    free(bufferTwo);
-    free(bufferThree);
+    delete(bufferOne);
+    delete(bufferTwo);
+    delete(bufferThree);
 
     return 0;
 }
@@ -68,68 +70,71 @@ void stageOne(boundedBuffer* buff) {
     DIR *directory;
     dirent *entry;
 
-    if ((directory = opendir(".")) != NULL) {
+    if( (directory = opendir(".")) != NULL){
 
-        while ((entry = readdir(directory)) != NULL) {
-            if (entry->d_type == DT_REG) {
-                string filename = entry->d_name;
-                buff->add(filename);
+        while( (entry= readdir(directory)) != NULL){
+            if( !(strcmp(entry->d_name, ".")) || !(strcmp(entry->d_name,"..")) ){
 
+            }else {
+                string str =entry->d_name;
+                //cout << str << endl;
+                buff->add(str);
             }
-
         }
         closedir(directory);
 
-    } else {
+    }else{
         errormsg("Could not access Directory");
     }
 
+    string key = "alldone6969";
+    buff->add(key);
 
-    buff->add((string &) "\n");
 }
 
 void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2){
-
+    string key = "alldone6969";
     while(true){
+
         string str = buffer1->remove();
-        if(str.empty()){
+        //cout << str << endl;
+        if(!(str.compare(key))){
+            // buffer2 ->add(key);
             break;
         }
         buffer2 ->add(str);
-
     }
-    buffer2 ->add((string &) "\n");
+    buffer2 ->add(key);
+
 
 }
 
 
 void stageThree(boundedBuffer* buffer2, boundedBuffer* buffer3){
-
+    string key = "alldone6969";
     while(true){
         string filename = buffer2 ->remove();
-        cout<< filename;
+        cout << filename << endl;
 
-        if(filename.empty()){
+
+        if(!(filename.compare(key))){
+            buffer2 ->add(key);
             break;
         }
 
         ifstream file;
         file.open(filename);
         if(!file){
+            perror("Could not access file");
             //do nothing
         }else{
             string line;
-            while (getline(file, line)){
+            while (getline(file, line)) {
                 cout << line << endl;
                 buffer3->add(line);
-                file.close();
             }
-
             file.close();
         }
 
-    }}
-
-void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4){
-
+    }
 }

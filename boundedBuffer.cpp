@@ -1,48 +1,60 @@
-include "boundedBuffer.h"
 
+#include "boundedBuffer.h"
 #include <string>
-
 #include <cmath>
-#include <cstdlib>
 #include <cassert>
-#include <semaphore>
-#include <vector>
-#include <stdio.h>
+#include <iostream>
+#include <semaphore.h>
+#include <fcntl.h>
+
+
+
 
 using namespace std;
 
-boundedBuffer :: boundedBuffer(size_t BUFFSIZE):
-        head(0),tail(0),count(0),bbuffer(BUFFSIZE), pcMutex(1), emptySlots(BUFFSIZE), fullSlots(0), CAPACITY(BUFFSIZE)
+
+boundedBuffer :: boundedBuffer(int BUFFSIZE):
+        head(0),tail(0),count(0),bbuffer(BUFFSIZE), CAPACITY(BUFFSIZE)
 {
-    sem_init(&pcMutex,0,1);
-    sem_init(&emptySlots,0,BUFFSIZE);
-    sem_init(&fullSlots,0,0);
+    pcMutex = sem_open("pcMutex",O_CREAT,0644,1);
+    fullSlots = sem_open("fullSlots", O_CREAT,0664,0);
+    emptySlots = sem_open("emptySlots", O_CREAT,0644,BUFFSIZE);
+    if( pcMutex == SEM_FAILED || fullSlots == SEM_FAILED || emptySlots == SEM_FAILED ){
+        sem_close(pcMutex);
+        sem_close(fullSlots);
+        sem_close(emptySlots);
+        sem_unlink("pcMutex");
+        sem_unlink("fullSlots");
+        sem_unlink("emptySlots");
+    }
+
+
 }
 
 /* Function used to add an item to the buffer */
 void boundedBuffer:: add( string& str){
 
 /* Reserve an empty slot */
-    sem_wait(&emptySlots);
+    sem_wait(emptySlots);
 
 /* Acquire the lock for critical section */
-    sem_wait( &pcMutex );
+    sem_wait(pcMutex );
 
-    assert(count >= 0 && count <= CAPACITY);
+//assert(count >= 0 && count <= CAPACITY);
 
 
 /* insert the item at the tail end of the buffer */
-    bbuffer[tail ] = str ;
+    bbuffer[tail] = str ;
     tail = (tail + 1) % CAPACITY;
     ++count;
 
 
 
 /* Wake up a consumer */
-    sem_post( &fullSlots );
+    sem_post( fullSlots );
 
 /* Release the lock for critical section */
-    sem_post( &pcMutex );
+    sem_post( pcMutex );
 
 
     return;
@@ -53,29 +65,29 @@ string boundedBuffer:: remove()
 {
 
     /* Reserve a full slot */
-    sem_wait( &fullSlots );
+    sem_wait( fullSlots );
 
 
     /* Acquire the lock for critical section */
-    sem_wait( &pcMutex );
+    sem_wait( pcMutex );
 
-    assert(count >= 0 && count <= CAPACITY);
+    //assert(count >= 0 && count <= CAPACITY);
 
 
     /* Delete an item at the head end of the buffer */
     string filename = bbuffer[head];
-    bbuffer[head]="\n";
+    //bbuffer[head]="\n";
     head = (head + 1) % CAPACITY;
     --count;
 
-    assert(filename.empty());
+    //assert(filename.empty());
 
 
     /* Wake up a producer */
-    sem_post( &emptySlots );
+    sem_post( emptySlots );
 
     /* Release the lock for critical section */
-    sem_post( &pcMutex );
+    sem_post( pcMutex );
 
     return filename;
 }
@@ -99,13 +111,18 @@ void boundedBuffer :: consumer( void )
 }
 
 void boundedBuffer::print(){
-    for(int i =0; i <30; i++) {
-        fprintf(stdout, "%s\n", bbuffer[i].c_str());
-    }}
+    for(int i =0; i <200; i++){
+        cout << bbuffer[i] << endl;
+    }
+
+}
 
 boundedBuffer::~boundedBuffer() {
-    sem_destroy(&pcMutex);
-    sem_destroy(&emptySlots);
-    sem_destroy(&fullSlots);
+    sem_close(pcMutex);
+    sem_close(fullSlots);
+    sem_close(emptySlots);
+    sem_unlink("pcMutex");
+    sem_unlink("fullSlots");
+    sem_unlink("emptySlots");
 
 }

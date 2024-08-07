@@ -6,6 +6,7 @@
 #include "boundedBuffer.h"
 #include <fstream>
 #include <libc.h>
+#include <cstring>
 
 
 
@@ -87,19 +88,18 @@ void stageOne(boundedBuffer* buff) {
         errormsg("Could not access Directory");
     }
 
-    string key = "alldone6969";
+    string key ( "alldone6969");
     buff->add(key);
 
 }
 
 void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2){
-    string key = "alldone6969";
+    string key ( "alldone6969");
     while(true){
-
         string str = buffer1->remove();
         //cout << str << endl;
         if(!(str.compare(key))){
-            // buffer2 ->add(key);
+            buffer2 ->add(key);
             break;
         }
         buffer2 ->add(str);
@@ -111,30 +111,25 @@ void stageTwo(boundedBuffer* buffer1, boundedBuffer* buffer2){
 
 
 void stageThree(boundedBuffer* buffer2, boundedBuffer* buffer3){
-    string key = "alldone6969";
+    string key ("alldone6969");
     while(true){
         string filename = buffer2 ->remove();
-        cout << filename << endl;
-
 
         if(!(filename.compare(key))){
             buffer2 ->add(key);
             break;
         }
 
-        ifstream file;
-        file.open(filename);
-        if(!file){
-            perror("Could not access file");
-            //do nothing
-        }else{
-            string line;
-            while (getline(file, line)) {
-                cout << line << endl;
-                buffer3->add(line);
-            }
-            file.close();
+        ifstream file(filename);
+        string line;
+        while (getline(file, line)) {
+            buffer3->add(line);
         }
-
+        file.close();
     }
+}
+
+void stageFour(boundedBuffer* buffer3, boundedBuffer* buffer4){
+
+
 }
